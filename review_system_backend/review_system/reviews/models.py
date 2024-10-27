@@ -23,3 +23,4 @@ class Alert(models.Model):
     business = models.ForeignKey(Business, on_delete=models.CASCADE)
     review = models.ForeignKey(Review, on_delete=models.CASCADE)
     sent = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
