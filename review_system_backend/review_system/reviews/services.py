@@ -1,4 +1,7 @@
 from .notifications import send_email_alert, send_sms_alert
+import logging
+
+logger = logging.getLogger(__name__)
 
 class AlertService:
     @staticmethod
@@ -13,9 +16,9 @@ class AlertService:
         try:
             send_email_alert(alert)
         except Exception as e:
-            print.error(f"Failed to send email alert: {e}")
+            logger.error(f"Failed to send email alert: {e}")
 
         try:
             send_sms_alert(alert)
         except Exception as e:
-            print.error(f"Failed to send SMS alert: {e}")
+            logger.error(f"Failed to send SMS alert: {e}")

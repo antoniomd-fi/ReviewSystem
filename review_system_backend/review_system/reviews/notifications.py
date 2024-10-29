@@ -2,17 +2,19 @@ from django.core.mail import send_mail
 from twilio.rest import Client
 from django.conf import settings
 import json
+import logging
 
 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+logger = logging.getLogger(__name__)
 
 def send_email_alert(alert):
     subject = f"Low Rating Alert for {alert.business.name}"
     message = f"New low rating:\nRating: {alert.review.rating}\nComment: {alert.review.comment}"
     try:
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [alert.business.email])
-        print((f"Email alert sent to {alert.business.email} for review {alert.review.id}"))
+        logger.info((f"Email alert sent to {alert.business.email} for review {alert.review.id}"))
     except Exception as e:
-        print(f"Failed to send email alert for review {alert.review.id}: {e}")
+        logger.error(f"Failed to send email alert for review {alert.review.id}: {e}")
 
 def send_sms_alert(alert):
     message_template = 'review_system_template_2'
@@ -29,7 +31,7 @@ def send_sms_alert(alert):
                 to=f'whatsapp:{alert.business.phone_number}',
                 content_variables=content_variables
             )
-            print((f"Whatsapp alert sent to {alert.business.phone_number} for review {alert.review.id}"))
+            logger.info((f"Whatsapp alert sent to {alert.business.phone_number} for review {alert.review.id}"))
         except Exception as e:
-            print(f"Error sending WhatsApp message: {e}")
+            logger.error(f"Error sending WhatsApp message: {e}")
         
