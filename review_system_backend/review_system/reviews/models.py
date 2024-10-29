@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from .services import AlertService
 
 class Business(models.Model):
     name = models.CharField(max_length=100)
@@ -16,8 +17,7 @@ class Review(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        if self.rating <= 2:
-            Alert.objects.create(business=self.business, review=self)
+        AlertService.create_alert_for_review(self)
 
 class Alert(models.Model):
     business = models.ForeignKey(Business, on_delete=models.CASCADE)
