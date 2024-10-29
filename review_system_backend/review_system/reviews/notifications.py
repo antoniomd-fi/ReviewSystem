@@ -3,11 +3,15 @@ from twilio.rest import Client
 from django.conf import settings
 import json
 import logging
+from celery import shared_task
 
 client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 logger = logging.getLogger(__name__)
 
-def send_email_alert(alert):
+@shared_task
+def send_email_alert(alert_id):
+    from .models import Alert
+    alert = Alert.objects.get(id=alert_id)
     subject = f"Low Rating Alert for {alert.business.name}"
     message = f"New low rating:\nRating: {alert.review.rating}\nComment: {alert.review.comment}"
     try:
@@ -16,8 +20,10 @@ def send_email_alert(alert):
     except Exception as e:
         logger.error(f"Failed to send email alert for review {alert.review.id}: {e}")
 
-def send_sms_alert(alert):
-    message_template = 'review_system_template_2'
+@shared_task
+def send_sms_alert(alert_id):
+    from .models import Alert
+    alert = Alert.objects.get(id=alert_id)
     content_variables = json.dumps({
         '1': alert.business.name,
         '2': str(alert.review.rating),
