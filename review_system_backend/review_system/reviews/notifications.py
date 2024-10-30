@@ -5,8 +5,10 @@ import json
 import logging
 from celery import shared_task
 
-client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 logger = logging.getLogger(__name__)
+
+def get_twilio_client():
+    return Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
 @shared_task
 def send_email_alert(alert_id):
@@ -23,6 +25,7 @@ def send_email_alert(alert_id):
 @shared_task
 def send_sms_alert(alert_id):
     from .models import Alert
+    client = get_twilio_client()
     alert = Alert.objects.get(id=alert_id)
     content_variables = json.dumps({
         '1': alert.business.name,

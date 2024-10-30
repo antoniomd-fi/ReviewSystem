@@ -1,4 +1,5 @@
 from .notifications import send_email_alert, send_sms_alert
+import sys
 import logging
 
 logger = logging.getLogger(__name__)
@@ -13,9 +14,12 @@ class AlertService:
                 review=review,
                 defaults={'sent': False}
             )
-            if(created or not alert.sent):
+            if created or not alert.sent:
                 logger.info(f"Creating alert for {review.business.name} due to low rating.")
-                AlertService.notify(alert)
+                if "test" not in sys.argv:
+                    AlertService.notify(alert)
+                else:
+                    logger.info("Test mode detected - Skipping notification sending.")
 
     @staticmethod
     def notify(alert):
@@ -27,3 +31,4 @@ class AlertService:
             logger.info(f"Alert marked as sent for review {alert.review.id}.")
         except Exception as e:
             logger.error(f"Failed to send notifications for alert {alert.id}: {e}")
+            
