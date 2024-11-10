@@ -35,10 +35,10 @@ https://github.com/user-attachments/assets/236cf297-bc0e-4815-8dbc-7b371e6c9885
 
    ```bash
    git clone https://github.com/antoniomd-fi/ReviewSystem
-   cd review_system_backend
+   
 
 2. Set Up Environment Variables
-   - In the review_system_backend folder, create a .env file with the following configuration:
+   - In the root, create a .env file with the following configuration:
     ```env
       DEBUG=1
       CELERY_BROKER_URL=redis://redis:6379/0
